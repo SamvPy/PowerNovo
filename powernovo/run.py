@@ -154,6 +154,16 @@ def run_inference(inputs: str,
     else:
         logger.error('Invalid inputs. Either an mgf file or a directory containing such files must be specified')
 
+def str2bool(value):
+    if isinstance(value, bool):
+        return value
+    if value.lower() in {'true', '1', 'yes', 'y'}:
+        return True
+    elif value.lower() in {'false', '0', 'no', 'n'}:
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 
 def main():
     parser = argparse.ArgumentParser(description="Start PowerNovo pipeline")
@@ -164,23 +174,23 @@ def main():
 
     parser.add_argument('-o', '--output_folder', type=str, help='Output folder [optional]', required=False, default='')
     parser.add_argument('-batch_size', '--batch_size', type=int, help='Batch size', required=False, default=16)
-    parser.add_argument('-alps', '--assembler', type=bool, help='Use ALPS assembler [optional]',
+    parser.add_argument('-alps', '--assembler', type=str2bool, help='Use ALPS assembler [optional]',
                         required=False, default=True)
     parser.add_argument('-num_contigs', '--num_contigs', type=int, help='Number of generated contigs',
                         required=False, default=20)
     parser.add_argument('-contigs_kmers', '--contigs_kmers', type=int, help='Contigs kmers size',
                         required=False, nargs='+', default=[7, 8, 10])
-    parser.add_argument('-infer', '--protein_inference', type=bool, help='Use protein inference algorithm [optional]',
+    parser.add_argument('-infer', '--protein_inference', type=str2bool, help='Use protein inference algorithm [optional]',
                         required=False, default=True)
     parser.add_argument('-fasta', '--fasta_path', type=str, help="Path to the fasta file that is used for "
                                                                  "peptide-protein mappings. "
                                                                  "If not specified will be used"
                                                                  "UP000005640_9606.fasta",
                         required=False, default='')
-    parser.add_argument('-use-bert', '--use_bert', type=bool, help='Use BERT model',
+    parser.add_argument('-use-bert', '--use_bert', type=str2bool, help='Use BERT model',
                         required=False, default=True)
     args = parser.parse_args()
-
+    logger.info(args)
     inputs = args.inputs
 
     if not os.path.exists(inputs):
